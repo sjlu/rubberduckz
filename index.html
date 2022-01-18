@@ -79,6 +79,7 @@
 
             data.forEach(function (value) {
               const id = value.ID.padStart(4, '0')
+              value['Source URL'] = value['Source URL'] || `https://www.google.com/search?q=${encodeURIComponent(value.Name)}`
               sheetData[id] = value
             })
 
