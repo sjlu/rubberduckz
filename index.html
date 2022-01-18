@@ -21,24 +21,31 @@
       .details {
         display: flex;
         flex-direction: row;
+        min-width: 0;
+        width: 200px;
+      }
+
+      .details a:nth-child(1) {
+        flex-shrink: 0;
+        width: 45px;
       }
 
       .details a:nth-child(2) {
         flex: 1;
         text-align: right;
-        max-width: 150px;
         overflow: hidden;
         text-overflow: ellipsis;
+        white-space: nowrap;
       }
     </style>
   </head>
   <body>
     <div id="images">
       <div class="image" v-for="image in images">
-        <img v-bind:src="'images/' + image + '.jpg'" />
+        <img :src="'images/' + image + '.jpg'" />
         <div class="details">
-          <a v-bind:href="'https://opensea.io/assets/0xa5e25b44b01e09b7455851838c76cde68d13e29f/' + image" target="_new">{{ image }}</a>
-          <a v-if="sheetData[image]" v-bind:href="sheetData[image]['Source URL']">{{ sheetData[image].Name }}</a>
+          <a :href="'https://opensea.io/assets/0xa5e25b44b01e09b7455851838c76cde68d13e29f/' + image" target="_new">{{ image }}</a>
+          <a v-if="sheetData[image]" :href="sheetData[image]['Source URL']" :title="sheetData[image].Name">{{ sheetData[image].Name }}</a>
         </div>
       </div>
     </div>
