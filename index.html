@@ -17,28 +17,70 @@
         max-width: 200px;
         display: block;
       }
+
+      .details {
+        display: flex;
+        flex-direction: row;
+      }
+
+      .details a:nth-child(2) {
+        flex: 1;
+        text-align: right;
+        max-width: 150px;
+        overflow: hidden;
+        text-overflow: ellipsis;
+      }
     </style>
   </head>
   <body>
     <div id="images">
       <div class="image" v-for="image in images">
         <img v-bind:src="'images/' + image + '.jpg'" />
-        <a v-bind:href="'https://opensea.io/assets/0xa5e25b44b01e09b7455851838c76cde68d13e29f/' + image" target="_new">{{ image }}</div>
+        <div class="details">
+          <a v-bind:href="'https://opensea.io/assets/0xa5e25b44b01e09b7455851838c76cde68d13e29f/' + image" target="_new">{{ image }}</a>
+          <a v-if="sheetData[image]" v-bind:href="sheetData[image]['Source URL']">{{ sheetData[image].Name }}</a>
+        </div>
       </div>
     </div>
 
     <script>
-      const keys = [...Array(2001).keys()]
+      let keys = [...Array(2001).keys()]
       keys.shift()
 
-      new Vue({
+      let images = keys.map(function (i) {
+        return i.toString().padStart(4, '0')
+      })
+
+      const app = new Vue({
         el: '#images',
         data: {
-          images: keys.map(function (i) {
-            return i.toString().padStart(4, '0')
-          })
+          images: images,
+          sheetData: {}
+        },
+        methods: {
+          fetchSheet: async function () {
+            const data = await fetch('https://sheetdb.io/api/v1/dhpabfnyrr4mj/search?Name=!', {
+              headers: {
+                'Content-Type': 'application/json'
+              }
+            })
+            .then(function (response) {
+              return response.json()
+            })
+
+            const sheetData = {}
+
+            data.forEach(function (value) {
+              const id = value.ID.padStart(4, '0')
+              sheetData[id] = value
+            })
+
+            this.sheetData = sheetData
+          }
         }
       })
+
+      app.fetchSheet()
     </script>
   </body>
 </html>
