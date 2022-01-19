@@ -45,7 +45,7 @@
         <img :src="'images/' + image + '.jpg'" />
         <div class="details">
           <a :href="'https://opensea.io/assets/0xa5e25b44b01e09b7455851838c76cde68d13e29f/' + image" target="_new">{{ image }}</a>
-          <a v-if="sheetData[image]" :href="sheetData[image]['Source URL']" :title="sheetData[image].Name">{{ sheetData[image].Name }}</a>
+          <a v-if="sheetData[image]" :href="sheetData[image]['Source URL']" :title="sheetData[image].Name" target="_new">{{ sheetData[image].Name }}</a>
         </div>
       </div>
     </div>
@@ -57,6 +57,18 @@
       let images = keys.map(function (i) {
         return i.toString().padStart(4, '0')
       })
+
+      function isValidHttpUrl (string) {
+        let url
+
+        try {
+          url = new URL(string)
+        } catch (_) {
+          return false
+        }
+
+        return url.protocol === "http:" || url.protocol === "https:"
+      }
 
       const app = new Vue({
         el: '#images',
@@ -79,7 +91,7 @@
 
             data.forEach(function (value) {
               const id = value.ID.padStart(4, '0')
-              value['Source URL'] = value['Source URL'] || `https://www.google.com/search?q=${encodeURIComponent(value.Name)}`
+              value['Source URL'] = isUrl(value['Source URL']) ? value['Source URL'] : `https://www.google.com/search?q=${encodeURIComponent(value.Name)}`
               sheetData[id] = value
             })
 
