@@ -4,6 +4,11 @@
     <script src="https://cdn.jsdelivr.net/npm/vue@2/dist/vue.js"></script>
 
     <style>
+      .header {
+        padding: 0.5em 1.5em;
+        max-width: 600px;
+      }
+
       #images {
         padding: 1em;
       }
@@ -40,6 +45,15 @@
     </style>
   </head>
   <body>
+    <div class="header">
+      <h1>Rubber Duckz</h1>
+      <p>
+        Names are sourced by the community and are in no way representative of what they are. Images were copied from the project onto this website for to avoid latency with IPFS and OpenSea. Always double check the link you are viewing before buying. I (Steven Lu) am in no way affiliated with the project or its team.
+      </p>
+      <a href="https://rubberduckz.com" target="_new">https://rubberduckz.com</a><br/>
+      <a href="https://github.com/sjlu/rubberduckz" target="_new">https://github.com/sjlu/rubberduckz</a>
+    </div>
+
     <div id="images">
       <div class="image" v-for="image in images">
         <img :src="'images/' + image + '.jpg'" />
