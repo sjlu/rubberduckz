@@ -4,9 +4,20 @@
     <script src="https://cdn.jsdelivr.net/npm/vue@2/dist/vue.js"></script>
 
     <style>
+      .filters,
       .header {
         padding: 0.5em 1.5em;
         max-width: 600px;
+      }
+
+      option {
+        font-size: 16px;
+      }
+
+      select {
+        padding: 0 0.25rem;
+        font-size: 16px;
+        height: 36px;
       }
 
       #images {
@@ -45,21 +56,31 @@
     </style>
   </head>
   <body>
-    <div class="header">
-      <h1>Rubber Duckz</h1>
-      <p>
-        Names are sourced by the community and are in no way representative of what they are. Images were copied from the project onto this website for to avoid latency with IPFS and OpenSea. Always double check the link you are viewing before buying. I (Steven Lu) am in no way affiliated with the project or its team.
-      </p>
-      <a href="https://rubberduckz.com" target="_new">https://rubberduckz.com</a><br/>
-      <a href="https://github.com/sjlu/rubberduckz" target="_new">https://github.com/sjlu/rubberduckz</a>
-    </div>
+    <div id="app">
+      <div class="header">
+        <h1>Rubber Duckz</h1>
+        <p>
+          Names are sourced by the community and are in no way representative of what they are. Images were copied from the project onto this website for to avoid latency with IPFS and OpenSea. Always double check the link you are viewing before buying. I (Steven Lu) am in no way affiliated with the project or its team.
+        </p>
+        <a href="https://rubberduckz.com" target="_new">https://rubberduckz.com</a><br/>
+        <a href="https://github.com/sjlu/rubberduckz" target="_new">https://github.com/sjlu/rubberduckz</a>
+        <a href="https://docs.google.com/spreadsheets/d/14P4HXx8q_hbZIPCut-qp1Yh5TwhZ-iDdNqWiaT8rTQU/edit?usp=sharing" target="_new">https://docs.google.com/spreadsheets/d/14P4HXx8q_hbZIPCut-qp1Yh5TwhZ-iDdNqWiaT8rTQU/edit?usp=sharing</a>
+      </div>
 
-    <div id="images">
-      <div class="image" v-for="image in images">
-        <img :src="'images/' + image + '.jpg'" />
-        <div class="details">
-          <a :href="'https://opensea.io/assets/0xa5e25b44b01e09b7455851838c76cde68d13e29f/' + image" target="_new">{{ image }}</a>
-          <a v-if="sheetData[image]" :href="sheetData[image]['Source URL']" :title="sheetData[image].Name" target="_new">{{ sheetData[image].Name }}</a>
+      <div class="filters">
+        <select v-model="category">
+          <option disabled value="">Filter by category...</option>
+          <option v-for="c in categories" :value="c">{{ c }}</option>
+        </select>
+      </div>
+
+      <div id="images">
+        <div class="image" v-for="image in getData()">
+          <img :src="'images/' + image + '.jpg'" />
+          <div class="details">
+            <a :href="'https://opensea.io/assets/0xa5e25b44b01e09b7455851838c76cde68d13e29f/' + image" target="_new">{{ image }}</a>
+            <a v-if="sheetData[image]" :href="sheetData[image]['Source URL']" :title="sheetData[image].Name" target="_new">{{ sheetData[image].Name }}</a>
+          </div>
         </div>
       </div>
     </div>
@@ -85,12 +106,25 @@
       }
 
       const app = new Vue({
-        el: '#images',
+        el: '#app',
         data: {
           images: images,
+          category: '',
+          categories: [],
           sheetData: {}
         },
         methods: {
+          getData: function () {
+            let data = this.images
+
+            if (this.category) {
+              data = data.filter((image) => {
+                return this.sheetData[image]?.Category === this.category
+              })
+            }
+
+            return data
+          },
           fetchSheet: async function () {
             const data = await fetch('https://sheetdb.io/api/v1/dhpabfnyrr4mj/search?Name=!', {
               headers: {
@@ -101,15 +135,18 @@
               return response.json()
             })
 
-            const sheetData = {}
-
-            data.forEach(function (value) {
+            data.forEach((value) => {
               const id = value.ID.padStart(4, '0')
               value['Source URL'] = isUrl(value['Source URL']) ? value['Source URL'] : `https://www.google.com/search?q=${encodeURIComponent(value.Name)}`
-              sheetData[id] = value
+
+              this.sheetData[id] = value
+
+              if (value['Category'] && !this.categories.includes(value['Category'])) {
+                this.categories.push(value['Category'])
+              }
             })
 
-            this.sheetData = sheetData
+            this.categories = this.categories.sort()
           }
         }
       })
