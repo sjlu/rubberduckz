@@ -9,7 +9,7 @@ const sharp = require('sharp')
 const COLLECTION_NAME = 'rubberduckz'
 const OPENSEA_API_URL = 'https://api.opensea.io/api/v1'
 const ASSET_CONTRACT_ADDRESS = '0xa5e25b44b01e09b7455851838c76cde68d13e29f'
-const IPFS_BASE_URL = 'https://ipfs.io/ipfs/QmddjpKasZAshWn5GWun64DdMBaYBCDi4Mu7yJSPoCSsP8'
+const IPFS_BASE_URL = 'https://ipfs.io/ipfs/QmYvVbCBiGHfiL1RUrVCupX2MrxkikogSSsQYcKhKyovwp'
 
 const resizeImage = async function (buffer) {
   return await sharp(buffer).resize(200).toBuffer()
@@ -57,8 +57,8 @@ const saveImage = async function (filename, data) {
 }
 
 const getAndSaveDuck = async function (id) {
-  const photoUrl = await getOpenSeaData(id)
-  // const photoUrl = `${IPFS_BASE_URL}/${id}.jpeg`
+  // const photoUrl = await getOpenSeaData(id)
+  const photoUrl = `${IPFS_BASE_URL}/${id}.jpeg`
   const imageData = await downloadImage(photoUrl)
   const resizedImageData = await resizeImage(imageData)
   await saveImage(_.padStart(id, 4, '0'), resizedImageData)
@@ -70,15 +70,17 @@ Promise
     return fs.readdirAsync(path.join(__dirname, 'images'))
   })
   .then(function (files) {
-    return _.differenceBy(_.range(1, 2001), files, function (i) {
-      if (typeof i === 'string') {
-        return i
-      }
+    return _.range(1, 2001)
+    // return _.differenceBy(_.range(1, 2001), files, function (i) {
+    //   if (typeof i === 'string') {
+    //     return i
+    //   }
 
-      return `${_.padStart(i, 4, '0')}.jpg`
-    })
+    //   return `${_.padStart(i, 4, '0')}.jpg`
+    // })
   })
   .map(function (i) {
+    console.log(i)
     return Promise.resolve(getAndSaveDuck(i))
   }, {
     concurrency: 2
