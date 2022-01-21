@@ -12,7 +12,7 @@ const ASSET_CONTRACT_ADDRESS = '0xa5e25b44b01e09b7455851838c76cde68d13e29f'
 const IPFS_BASE_URL = 'https://ipfs.io/ipfs/QmYvVbCBiGHfiL1RUrVCupX2MrxkikogSSsQYcKhKyovwp'
 
 const resizeImage = async function (buffer) {
-  return await sharp(buffer).resize(200).toBuffer()
+  return await sharp(buffer).resize(400).toBuffer()
 }
 
 const downloadImage = async function (url) {
