@@ -4,11 +4,16 @@ const _ = require('lodash')
 const request = Promise.promisify(require('request'))
 const fs = Promise.promisifyAll(require('fs'))
 const path = require('path')
+const sharp = require('sharp')
 
 const COLLECTION_NAME = 'rubberduckz'
 const OPENSEA_API_URL = 'https://api.opensea.io/api/v1'
 const ASSET_CONTRACT_ADDRESS = '0xa5e25b44b01e09b7455851838c76cde68d13e29f'
 const IPFS_BASE_URL = 'https://ipfs.io/ipfs/QmddjpKasZAshWn5GWun64DdMBaYBCDi4Mu7yJSPoCSsP8'
+
+const resizeImage = async function (buffer) {
+  return await sharp(buffer).resize(200).toBuffer()
+}
 
 const downloadImage = async function (url) {
   const req = {
@@ -52,10 +57,11 @@ const saveImage = async function (filename, data) {
 }
 
 const getAndSaveDuck = async function (id) {
-  // const photoUrl = await getOpenSeaData(id)
-  const photoUrl = `${IPFS_BASE_URL}/${id}.jpeg`
+  const photoUrl = await getOpenSeaData(id)
+  // const photoUrl = `${IPFS_BASE_URL}/${id}.jpeg`
   const imageData = await downloadImage(photoUrl)
-  await saveImage(_.padStart(id, 4, '0'), imageData)
+  const resizedImageData = await resizeImage(imageData)
+  await saveImage(_.padStart(id, 4, '0'), resizedImageData)
 }
 
 Promise
