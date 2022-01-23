@@ -1,0 +1,8 @@
+#!/usr/bin/env node
+var web = require('../web')
+var server = require('../lib/server')
+
+// Cloudflare has an origin timeout of 100 seconds
+server.createServer(web, process.env.PORT || '8080', {
+  timeout: 10000
+})
