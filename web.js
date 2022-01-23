@@ -2,10 +2,13 @@ const express = require('express')
 const app = express()
 const _ = require('lodash')
 const { GoogleSpreadsheet } = require('google-spreadsheet')
+const cors = require('cors')
 require('dotenv').config()
 
 const doc = new GoogleSpreadsheet(process.env.SPREADSHEET_ID)
 doc.useApiKey(process.env.GOOGLE_API_KEY)
+
+app.use(cors())
 
 app.get('/', async function (req, res, next) {
   await doc.loadInfo()
@@ -20,6 +23,7 @@ app.get('/', async function (req, res, next) {
     .filter((row) => {
       return row.Name
     })
+
 
   res.json(data)
 })
