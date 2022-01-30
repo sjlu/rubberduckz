@@ -9,7 +9,7 @@ const sharp = require('sharp')
 const COLLECTION_NAME = 'rubberduckz'
 const OPENSEA_API_URL = 'https://api.opensea.io/api/v1'
 const ASSET_CONTRACT_ADDRESS = '0xa5e25b44b01e09b7455851838c76cde68d13e29f'
-const IPFS_BASE_URL = 'https://ipfs.io/ipfs/QmYvVbCBiGHfiL1RUrVCupX2MrxkikogSSsQYcKhKyovwp'
+const IPFS_BASE_URL = 'https://rubberduckz.mypinata.cloud/ipfs/QmdkeBWT3nKkfigCtPncEei8L9ueziuqLrA7WRxKsPkzgc'
 
 const resizeImage = async function (buffer) {
   return await sharp(buffer).resize(400).toBuffer()
@@ -70,7 +70,8 @@ Promise
     return fs.readdirAsync(path.join(__dirname, 'images'))
   })
   .then(function (files) {
-    return _.range(1, 2001)
+    // return _.range(1, 2001)
+    return [941, 1039, 369, 1755, 1326, 493, 1450, 1376, 963, 1869, 1961, 697, 1639, 1032, 698, 117, 1314, 425, 391, 60, 68, 1993]
     // return _.differenceBy(_.range(1, 2001), files, function (i) {
     //   if (typeof i === 'string') {
     //     return i
